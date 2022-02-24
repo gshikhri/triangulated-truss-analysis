@@ -1,6 +1,6 @@
 ## triangulated-truss-analysis: Identify and label DNA origami based triangulated trusses from Electron microscopy images
 
-DNA Origami based triangulated trusses [reported here](https://pubs.acs.org/doi/full/10.1021/acs.nanolett.6b00381)
+DNA Origami based triangulated trusses [reported here](https://pubs.acs.org/doi/full/10.1021/acs.nanolett.6b00381), have been known to exhibit robust biophysical properties in solution (high persistence length)
 
 Their bio-physical properties can be investigated from the electron micrographs. That would require using computer vision algorithms to identify (segment) individual structures from a wide field of view. This is here achieved using a combination of traditional computer vision algorithms:
 - Adaptive thresholding
