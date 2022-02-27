@@ -19,23 +19,26 @@ in_folder = 'wireframe-tubes'
 for _, _, filenames in os.walk(in_folder):
     for file in filenames[-2:-1]:
         truss_image = io.imread(os.path.join(in_folder, file))
+        blur_truss_image = ndimage.gaussian_filter(truss_image, sigma=1.5)
 
-        thresh = filters.threshold_otsu(truss_image)
+        thresh = filters.threshold_otsu(blur_truss_image)
         binary = truss_image > thresh
         morphed_image = morphology.remove_small_objects(morphology.remove_small_holes(binary))
 
-        edges = filters.frangi(morphed_image)
+        clear = segmentation.clear_border(~morphed_image)
+
+        edges = filters.frangi(~clear)
         eroded_edges = morphology.binary_erosion(edges, np.ones(shape=(10, 10)))
 
         labelled_image = measure.label(eroded_edges)
 
-        regions = measure.regionprops_table(label_image=labelled_image, \
-            intensity_image=truss_image, properties=('label', 'area'))
-        df = pd.DataFrame(regions)
-        outlier_range = np.quantile(df['area'], [0, 1])
-        bad_labels = df[~df['area'].between(*outlier_range)].dropna()['label'].to_numpy().astype(np.int16)
-        for i in list(bad_labels):
-            labelled_image = np.where(labelled_image == i, 0, labelled_image)
+        # regions = measure.regionprops_table(label_image=labelled_image, \
+        #     intensity_image=truss_image, properties=('label', 'area'))
+        # df = pd.DataFrame(regions)
+        # outlier_range = np.quantile(df['area'], [0, 1])
+        # bad_labels = df[~df['area'].between(*outlier_range)].dropna()['label'].to_numpy().astype(np.int16)
+        # for i in list(bad_labels):
+        #     labelled_image = np.where(labelled_image == i, 0, labelled_image)
         
         binary_labelled = np.where(labelled_image != 0, 1, 0)
         
