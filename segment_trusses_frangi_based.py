@@ -19,40 +19,37 @@ in_folder = 'wireframe-tubes'
 for _, _, filenames in os.walk(in_folder):
     for file in filenames[-2:-1]:
         truss_image = io.imread(os.path.join(in_folder, file))
-        blur_truss_image = ndimage.gaussian_filter(truss_image, sigma=1.5)
+        blur_truss_image = ndimage.gaussian_filter(truss_image, sigma=5)
 
         thresh = filters.threshold_otsu(blur_truss_image)
         binary = truss_image > thresh
         morphed_image = morphology.remove_small_objects(morphology.remove_small_holes(binary))
 
         clear = segmentation.clear_border(~morphed_image)
+        modified_binary = morphology.binary_erosion(clear, np.ones(shape=(2, 2)))
 
-        edges = filters.frangi(~clear)
-        eroded_edges = morphology.binary_erosion(edges, np.ones(shape=(10, 10)))
+        edges = filters.frangi(~modified_binary)
+
+        eroded_edges = morphology.binary_erosion(edges, np.ones(shape=(12, 12)))
 
         labelled_image = measure.label(eroded_edges)
-
-        # regions = measure.regionprops_table(label_image=labelled_image, \
-        #     intensity_image=truss_image, properties=('label', 'area'))
-        # df = pd.DataFrame(regions)
-        # outlier_range = np.quantile(df['area'], [0, 1])
-        # bad_labels = df[~df['area'].between(*outlier_range)].dropna()['label'].to_numpy().astype(np.int16)
-        # for i in list(bad_labels):
-        #     labelled_image = np.where(labelled_image == i, 0, labelled_image)
         
         binary_labelled = np.where(labelled_image != 0, 1, 0)
         
-        fig, ax = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True, figsize=(10, 8))
-        ax[0].imshow(truss_image)
-        ax[1].imshow(binary_labelled)
-        ax[2].imshow(label2rgb(labelled_image, image=truss_image, bg_label=0))
-        fig.suptitle(file)
-        fig.tight_layout()
-        plt.show()
-
-        # fig, ax = plt.subplots()
-        # ax.imshow(label2rgb(morphology.skeletonize(binary_labelled), image=truss_image, bg_label=0))
+        # fig, ax = plt.subplots(nrows=2, ncols=2, sharex=True, sharey=True, figsize=(10, 8))
+        # ax[0][0].imshow(truss_image)
+        # ax[0][1].imshow(binary_labelled)
+        # ax[1][0].imshow(label2rgb(labelled_image, image=truss_image, bg_label=0))
+        # ax[1][1].imshow(label2rgb(morphology.skeletonize(binary_labelled), image=truss_image, bg_label=0))
         # fig.suptitle(file)
+        # fig.tight_layout()
         # plt.show()
+
+        # now I will use the binary labelled image to create the skeletons 
+        # that can be then used for the watershed
+
+        markers = measure.label(morphology.skeletonize(binary_labelled))
+        labels = morphology.watershed(clear, markers)
+
 
 a = 2
