@@ -48,8 +48,11 @@ for _, _, filenames in os.walk(in_folder):
         # now I will use the binary labelled image to create the skeletons 
         # that can be then used for the watershed
 
-        markers = measure.label(morphology.skeletonize(binary_labelled))
-        labels = morphology.watershed(clear, markers)
+        markers = measure.label(morphology.skeletonize(eroded_edges))
+        labels = segmentation.watershed(eroded_edges, markers)
+        plt.imshow(segmentation.mark_boundaries(truss_image, labels))
+        plt.show()
+        
 
 
 a = 2
