@@ -8,7 +8,7 @@ Their bio-physical properties can be investigated from the electron micrographs.
 - Structure identification using ridge detectors 
 - Labelling individual structures
 
-![](https://github.com/gshikhri/triangulated-truss-analysis/blob/main/zoo.png)
+![](https://github.com/gshikhri/triangulated-truss-analysis/blob/main/instance_segmentation.png)
 
 So far the algorithms can correctly segment trusses (some false positives when two trusses are touching). In future, I would like to implement RandomForest based pixel classifier for more robust segmentation. 
 
