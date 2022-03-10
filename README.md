@@ -4,9 +4,9 @@ DNA Origami based triangulated trusses [reported here](https://pubs.acs.org/doi/
 
 Their bio-physical properties can be investigated from the electron micrographs. That would require using computer vision algorithms to identify (segment) individual structures from a wide field of view. This is here achieved using a combination of traditional computer vision algorithms:
 - Adaptive thresholding
-- Mathematical morphology 
-- Structure identification using ridge detectors 
-- Labelling individual structures
+- Mathematical morphology (to create masks and skeletonized structures)
+- Ridge detection filters
+- Watershed segmentation
 
 ![](https://github.com/gshikhri/triangulated-truss-analysis/blob/main/instance_segmentation.png)
 
